@@ -1,16 +1,20 @@
 package markmixson.prioritysort;
 
 import com.google.common.base.Preconditions;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.Setter;
+import lombok.SneakyThrows;
 import org.apache.commons.lang3.Range;
 
 import java.util.Arrays;
 import java.util.BitSet;
-import java.util.stream.Stream;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Gets a {@link BitSet} that can be used inside {@link RuleMatchResults}.
@@ -18,12 +22,21 @@ import java.util.stream.Stream;
 @NoArgsConstructor
 public class BitSetGenerator {
 
+    private static final int CACHE_SIZE = 1_000;
+
     /**
-     * Cached {@link BitSet} used when requesting same cardinality repeatedly.
+     * {@link BitSet} cache used when requesting same cardinality repeatedly.
      */
     @Getter(AccessLevel.PRIVATE)
-    @Setter(AccessLevel.PRIVATE)
-    private BitSet cachedBitSet;
+    final private LoadingCache<Integer, BitSet> bitSetCache = CacheBuilder.newBuilder()
+            .maximumSize(CACHE_SIZE)
+            .concurrencyLevel(Runtime.getRuntime().availableProcessors())
+            .expireAfterAccess(1, TimeUnit.DAYS)
+            .build(CacheLoader.from(bits -> {
+                final var bitSet = new BitSet(bits);
+                bitSet.flip(0, bits);
+                return bitSet;
+            }));
 
     /**
      * How to generate a correct {@link BitSet}.
@@ -37,6 +50,7 @@ public class BitSetGenerator {
      * @param length the requested length.
      * @return the bitset
      */
+    @SneakyThrows(ExecutionException.class)
     public BitSet generate(final int @NonNull [] values, final int length) {
         Preconditions.checkArgument(values.length <= length);
         if (length == 0) {
@@ -44,28 +58,10 @@ public class BitSetGenerator {
         }
         final var range = Range.between(0, length - 1);
         Preconditions.checkArgument(Arrays.stream(values).allMatch(range::contains));
-        final var allBitsTrueSize = getLengthRoundedUpToNearestByte(length);
-        final var bitSet = getFlippedBitSet(allBitsTrueSize);
+        final var trueBits = getLengthRoundedUpToNearestByte(length);
+        final var bitSet = (BitSet) getBitSetCache().get(trueBits).clone();
         Arrays.stream(values).forEach(bitSet::flip);
         return bitSet;
-    }
-
-    /**
-     * Will hold/reuse the cached {@link BitSet} for all true until the cardinality changes.
-     *
-     * @param allSetCardinality the cardinality of the bitset requested.
-     * @return the bitset.
-     */
-    private BitSet getFlippedBitSet(final int allSetCardinality) {
-        return (BitSet) Stream.ofNullable(getCachedBitSet())
-                .filter(mySet -> mySet.cardinality() == allSetCardinality)
-                .map(BitSet::clone)
-                .findFirst()
-                .orElseGet(() -> {
-                    setCachedBitSet(new BitSet(allSetCardinality));
-                    getCachedBitSet().flip(0, allSetCardinality);
-                    return getCachedBitSet().clone();
-                });
     }
 
     private int getLengthRoundedUpToNearestByte(final int length) {
