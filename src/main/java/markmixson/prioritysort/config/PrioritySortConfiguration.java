@@ -46,10 +46,10 @@ public class PrioritySortConfiguration {
     public AsyncPool<StatefulRedisConnection<String, byte[]>> connectionPool() {
         final var uri = RedisURI.create(getRedisHost(), getRedisPort());
         @SuppressWarnings("resource") final var client = RedisClient.create(uri);
-        return AsyncConnectionPoolSupport.createBoundedObjectPool(() ->
-                        client.connectAsync(RedisCodec.of(StringCodec.UTF8, ByteArrayCodec.INSTANCE), uri),
-                BoundedPoolConfig.builder()
-                        .maxTotal(Runtime.getRuntime().availableProcessors())
-                        .build());
+        final var codec = RedisCodec.of(StringCodec.UTF8, ByteArrayCodec.INSTANCE);
+        final var config = BoundedPoolConfig.builder()
+                .maxTotal(Runtime.getRuntime().availableProcessors())
+                .build();
+        return AsyncConnectionPoolSupport.createBoundedObjectPool(() -> client.connectAsync(codec, uri), config);
     }
 }
