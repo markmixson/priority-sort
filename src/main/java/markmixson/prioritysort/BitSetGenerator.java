@@ -53,7 +53,7 @@ public class BitSetGenerator {
             case int[] v when v.length > length -> throw new IllegalArgumentException();
             case int[] ignored when length == 0 -> new BitSet(0);
             case int[] v when !Arrays.stream(v).allMatch(Range.between(0, length - 1)::contains) ->
-                    throw new IndexOutOfBoundsException();
+                    throw new IllegalArgumentException();
             default -> Stream.of(length % Byte.SIZE == 0 ? length : length + Byte.SIZE - length % Byte.SIZE)
                     .map(trueBits -> (BitSet) getBitSetCache().getUnchecked(trueBits).clone())
                     .peek(bitSet -> Arrays.stream(values).forEach(bitSet::flip))

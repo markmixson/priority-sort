@@ -22,7 +22,7 @@ public class BitSetGeneratorTest {
 
     @Test
     void testGeneratorValueBiggerThanLength() {
-        Assertions.assertThrows(IndexOutOfBoundsException.class, () ->
+        Assertions.assertThrows(IllegalArgumentException.class, () ->
                 getGenerator().generate(new int[]{100}, 99));
     }
 
