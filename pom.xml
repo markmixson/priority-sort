@@ -83,6 +83,13 @@
 				</configuration>
 			</plugin>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<argLine>--enable-preview</argLine>
+				</configuration>
+			</plugin>
+			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
 				<version>${jacoco.version}</version>
@@ -147,6 +154,7 @@
 					</execution>
 				</executions>
 				<configuration>
+					<argLine>--enable-preview</argLine>
 					<coverageThreshold>100</coverageThreshold>
 					<targetClasses>
 						<param>markmixson.prioritysort.BitSetGenerator</param>

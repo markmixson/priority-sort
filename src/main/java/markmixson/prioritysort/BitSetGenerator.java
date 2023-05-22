@@ -1,6 +1,5 @@
 package markmixson.prioritysort;
 
-import com.google.common.base.Preconditions;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -8,13 +7,12 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.SneakyThrows;
 import org.apache.commons.lang3.Range;
 
 import java.util.Arrays;
 import java.util.BitSet;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 
 /**
  * Gets a {@link BitSet} that can be used inside {@link RuleMatchResults}.
@@ -32,11 +30,11 @@ public class BitSetGenerator {
             .maximumSize(CACHE_SIZE)
             .concurrencyLevel(Runtime.getRuntime().availableProcessors())
             .expireAfterAccess(1, TimeUnit.DAYS)
-            .build(CacheLoader.from(bits -> {
-                final var bitSet = new BitSet(bits);
-                bitSet.flip(0, bits);
-                return bitSet;
-            }));
+            .build(CacheLoader.from(bits -> Stream.of(bits)
+                    .map(BitSet::new)
+                    .peek(bitSet -> bitSet.flip(0, bits))
+                    .findFirst().get()
+            ));
 
     /**
      * How to generate a correct {@link BitSet}.
@@ -50,26 +48,16 @@ public class BitSetGenerator {
      * @param length the requested length.
      * @return the bitset
      */
-    @SneakyThrows(ExecutionException.class)
     public BitSet generate(final int @NonNull [] values, final int length) {
-        Preconditions.checkArgument(values.length <= length);
-        if (length == 0) {
-            return new BitSet(0);
-        }
-        final var range = Range.between(0, length - 1);
-        Preconditions.checkArgument(Arrays.stream(values).allMatch(range::contains));
-        final var trueBits = getLengthRoundedUpToNearestByte(length);
-        final var bitSet = (BitSet) getBitSetCache().get(trueBits).clone();
-        Arrays.stream(values).forEach(bitSet::flip);
-        return bitSet;
-    }
-
-    private int getLengthRoundedUpToNearestByte(final int length) {
-        final int mod = length % Byte.SIZE;
-        if (mod == 0) {
-            return length;
-        } else {
-            return length + Byte.SIZE - mod;
-        }
+        return switch (values) {
+            case int[] v when v.length > length -> throw new IllegalArgumentException();
+            case int[] ignored when length == 0 -> new BitSet(0);
+            case int[] v when !Arrays.stream(v).allMatch(Range.between(0, length - 1)::contains) ->
+                    throw new IndexOutOfBoundsException();
+            default -> Stream.of(length % Byte.SIZE == 0 ? length : length + Byte.SIZE - length % Byte.SIZE)
+                    .map(trueBits -> (BitSet) getBitSetCache().getUnchecked(trueBits).clone())
+                    .peek(bitSet -> Arrays.stream(values).forEach(bitSet::flip))
+                    .findFirst().get();
+        };
     }
 }
