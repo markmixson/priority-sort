@@ -13,6 +13,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 /**
  * Base class for Redis priority sort clients.
@@ -86,8 +87,7 @@ public class RedisPrioritySortClient {
     }
 
     private String getName(final String prefix, final String suffix) {
-        Preconditions.checkArgument(StringUtils.isNotEmpty(prefix));
-        Preconditions.checkArgument(StringUtils.isNotEmpty(suffix));
+        Preconditions.checkArgument(Stream.of(prefix, suffix).noneMatch(StringUtils::isEmpty));
         return String.format("%s.%s", prefix, suffix);
     }
 }

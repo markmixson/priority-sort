@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.util.ReflectionTestUtils;
 import reactor.test.StepVerifier;
 
 import static markmixson.prioritysort.RedisPrioritySortClientTestData.*;
@@ -88,6 +89,41 @@ public class RedisPrioritySortMutationClientTest extends RedisPrioritySortClient
     void testNullMatchesAdd() {
         Assertions.assertThrows(NullPointerException.class,
                 () -> getClients().getMutation().addOrUpdate(MUTATION_SUFFIX, null).block());
+    }
+
+
+    @Test
+    void testBadSuffixMatchesAdd() {
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> getClients().getMutation().addOrUpdate("", FIRST).block());
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> getClients().getMutation().addOrUpdate(null, FIRST).block());
+    }
+
+    @Test
+    void testBadPrefixIndexMatchesAdd() {
+        final var prefix = "indexNamePrefix";
+        final var previous = (String) ReflectionTestUtils.getField(getClients().getMutation(), prefix);
+        ReflectionTestUtils.setField(getClients().getMutation(), prefix, null);
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> getClients().getMutation().addOrUpdate("test", FIRST).block());
+        ReflectionTestUtils.setField(getClients().getMutation(), prefix, "");
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> getClients().getMutation().addOrUpdate("test", FIRST).block());
+        ReflectionTestUtils.setField(getClients().getMutation(), prefix, previous);
+    }
+
+    @Test
+    void testBadPrefixSetMatchesAdd() {
+        final var prefix = "setNamePrefix";
+        final var previous = (String) ReflectionTestUtils.getField(getClients().getMutation(), prefix);
+        ReflectionTestUtils.setField(getClients().getMutation(), prefix, null);
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> getClients().getMutation().addOrUpdate("test", FIRST).block());
+        ReflectionTestUtils.setField(getClients().getMutation(), prefix, "");
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> getClients().getMutation().addOrUpdate("test", FIRST).block());
+        ReflectionTestUtils.setField(getClients().getMutation(), prefix, previous);
     }
 
     @Nested
