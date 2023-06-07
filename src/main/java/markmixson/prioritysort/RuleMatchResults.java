@@ -20,6 +20,9 @@ public record RuleMatchResults(
         @NonNull ZonedDateTime date,
         @NonNull Long id) {
 
+    private static final int NON_MATCHED_BYTES_SIZE = Long.BYTES * 2;
+    private static final ZoneId UTC = ZoneId.of("UTC");
+
     /**
      * Given a {@link byte[]}, get a {@link RuleMatchResults} back.
      * The byte array must have at least 2 times the amount of bytes in a long.
@@ -28,15 +31,15 @@ public record RuleMatchResults(
      * @return the {@link RuleMatchResults}.
      */
     public static RuleMatchResults getRuleMatchResults(final byte @NonNull [] bytes) {
-        Preconditions.checkArgument(bytes.length >= Long.BYTES * 2);
+        Preconditions.checkArgument(bytes.length >= NON_MATCHED_BYTES_SIZE);
         final var input = ByteBuffer.wrap(bytes);
-        final var matchedSize = input.array().length - (Long.BYTES * 2);
+        final var matchedSize = input.array().length - NON_MATCHED_BYTES_SIZE;
         final var matchedSlice = input.slice(0, matchedSize);
         final var dateSlice = input.slice(matchedSize, Long.BYTES);
         final var idSlice = input.slice(matchedSize + Long.BYTES, Long.BYTES);
         return RuleMatchResults.builder()
                 .matched(BitSet.valueOf(matchedSlice))
-                .date(ZonedDateTime.ofInstant(Instant.ofEpochSecond(dateSlice.getLong()), ZoneId.of("UTC")))
+                .date(ZonedDateTime.ofInstant(Instant.ofEpochSecond(dateSlice.getLong()), UTC))
                 .id(idSlice.getLong())
                 .build();
     }
@@ -47,7 +50,7 @@ public record RuleMatchResults(
      * @return a {@link byte[]} representing the {@link RuleMatchResults}.
      */
     public byte[] toByteArray() {
-        final var buffer = ByteBuffer.allocate(Long.BYTES * 2)
+        final var buffer = ByteBuffer.allocate(NON_MATCHED_BYTES_SIZE)
                 .putLong(date().toEpochSecond())
                 .putLong(id());
         return Bytes.concat(matched().toByteArray(), buffer.array());

@@ -23,6 +23,8 @@ import java.util.stream.Stream;
 @SuppressWarnings("SpringElInspection")
 public class RedisPrioritySortClient {
 
+    private static final String NAME_FORMAT = "%s.%s";
+
     /**
      * Prefix for indexes.
      */
@@ -88,6 +90,6 @@ public class RedisPrioritySortClient {
 
     private String getName(final String prefix, final String suffix) {
         Preconditions.checkArgument(Stream.of(prefix, suffix).noneMatch(StringUtils::isEmpty));
-        return String.format("%s.%s", prefix, suffix);
+        return String.format(NAME_FORMAT, prefix, suffix);
     }
 }
