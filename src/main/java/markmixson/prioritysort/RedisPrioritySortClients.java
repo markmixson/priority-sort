@@ -18,8 +18,13 @@ public class RedisPrioritySortClients {
      */
     private final PrioritySortQueryClient query;
 
-
-    public RedisPrioritySortClients(PrioritySortMutationClient mutation, PrioritySortQueryClient query) {
+    /**
+     * Main constructor.
+     *
+     * @param mutation mutation client
+     * @param query query client
+     */
+    public RedisPrioritySortClients(final PrioritySortMutationClient mutation, final PrioritySortQueryClient query) {
         this.mutation = mutation;
         this.query = query;
     }

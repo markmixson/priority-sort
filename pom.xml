@@ -16,7 +16,6 @@
     <properties>
         <java.version>25</java.version>
         <guava.version>33.6.0-jre</guava.version>
-        <commons-lang3.version>3.20.0</commons-lang3.version>
         <lombok.version>1.18.46</lombok.version>
         <testcontainers.version>2.0.5</testcontainers.version>
         <annotations.version>26.1.0</annotations.version>
@@ -40,11 +39,6 @@
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>${guava.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>${commons-lang3.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

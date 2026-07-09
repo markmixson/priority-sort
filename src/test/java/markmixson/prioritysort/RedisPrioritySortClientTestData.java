@@ -64,7 +64,7 @@ public class RedisPrioritySortClientTestData {
             0L);
 
     /**
-     * Updated first to have lowest results
+     * Updated first to have the lowest results
      */
     public static final RuleMatchResults UPDATED_FIRST = new RuleMatchResults(
             GENERATOR.generate(new int[]{0}, BITSET_LENGTH),

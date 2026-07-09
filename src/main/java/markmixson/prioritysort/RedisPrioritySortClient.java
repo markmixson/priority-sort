@@ -4,7 +4,7 @@ import com.google.common.base.Preconditions;
 import io.lettuce.core.api.StatefulRedisConnection;
 import io.lettuce.core.api.reactive.RedisReactiveCommands;
 import io.lettuce.core.support.AsyncPool;
-import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Value;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -38,6 +38,10 @@ public class RedisPrioritySortClient {
     private final AsyncPool<StatefulRedisConnection<String, byte[]>> pool;
 
 
+    /**
+     * Main constructor
+     * @param pool connection pool
+     */
     public RedisPrioritySortClient(final AsyncPool<StatefulRedisConnection<String, byte[]>> pool) {
         this.pool = pool;
     }
@@ -88,9 +92,9 @@ public class RedisPrioritySortClient {
         return getName(getSetNamePrefix(), suffix);
     }
 
-    private String getName(final String prefix, final String suffix) {
-        Preconditions.checkArgument(StringUtils.isNotBlank(prefix));
-        Preconditions.checkArgument(StringUtils.isNotBlank(suffix));
+    private String getName(final @Nullable String prefix, final @Nullable String suffix) {
+        Preconditions.checkArgument(prefix != null && !prefix.isBlank());
+        Preconditions.checkArgument(suffix != null && !suffix.isBlank());
         return String.format(NAME_FORMAT, prefix, suffix);
     }
 
