@@ -4,25 +4,22 @@ import com.google.common.base.Preconditions;
 import io.lettuce.core.api.StatefulRedisConnection;
 import io.lettuce.core.api.reactive.RedisReactiveCommands;
 import io.lettuce.core.support.AsyncPool;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Value;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.function.Function;
-import java.util.stream.Stream;
 
 /**
  * Base class for Redis priority sort clients.
  */
-@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-@Getter(AccessLevel.PRIVATE)
 @SuppressWarnings("SpringElInspection")
 public class RedisPrioritySortClient {
 
+    /**
+     * Name format for strings.
+     */
     private static final String NAME_FORMAT = "%s.%s";
 
     /**
@@ -37,10 +34,20 @@ public class RedisPrioritySortClient {
     @Value("${priority-sort.set-name-prefix:prioritysort.content}")
     private String setNamePrefix;
 
+
     /**
      * Connection pool.
      */
     private final AsyncPool<StatefulRedisConnection<String, byte[]>> pool;
+
+
+    /**
+     * Main constructor
+     * @param pool connection pool
+     */
+    public RedisPrioritySortClient(final AsyncPool<StatefulRedisConnection<String, byte[]>> pool) {
+        this.pool = pool;
+    }
 
     /**
      * Given a Redis command to run that has a single result, apply the command to a Redis connection pool.
@@ -52,7 +59,7 @@ public class RedisPrioritySortClient {
     protected <T> Mono<T> runSingle(final Function<RedisReactiveCommands<String, byte[]>, Mono<T>> toRun) {
         return Mono.fromFuture(() -> getPool().acquire())
                 .flatMap(connection -> toRun.apply(connection.reactive())
-                        .doFinally(signal -> getPool().release(connection)));
+                        .doFinally(_ -> getPool().release(connection)));
     }
 
     /**
@@ -65,7 +72,7 @@ public class RedisPrioritySortClient {
     protected <T> Flux<T> runMany(final Function<RedisReactiveCommands<String, byte[]>, Flux<T>> toRun) {
         return Mono.fromFuture(() -> getPool().acquire())
                 .flatMapMany(connection -> toRun.apply(connection.reactive())
-                        .doFinally(signal -> getPool().release(connection)));
+                        .doFinally(_ -> getPool().release(connection)));
     }
 
     /**
@@ -88,8 +95,21 @@ public class RedisPrioritySortClient {
         return getName(getSetNamePrefix(), suffix);
     }
 
-    private String getName(final String prefix, final String suffix) {
-        Preconditions.checkArgument(Stream.of(prefix, suffix).noneMatch(StringUtils::isEmpty));
+    private String getName(final @Nullable String prefix, final @Nullable String suffix) {
+        Preconditions.checkArgument(prefix != null && !prefix.isBlank());
+        Preconditions.checkArgument(suffix != null && !suffix.isBlank());
         return String.format(NAME_FORMAT, prefix, suffix);
+    }
+
+    public String getIndexNamePrefix() {
+        return indexNamePrefix;
+    }
+
+    public String getSetNamePrefix() {
+        return setNamePrefix;
+    }
+
+    public AsyncPool<StatefulRedisConnection<String, byte[]>> getPool() {
+        return pool;
     }
 }

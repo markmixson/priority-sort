@@ -1,7 +1,6 @@
 package markmixson.prioritysort;
 
-import lombok.NonNull;
-import lombok.SneakyThrows;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
@@ -22,7 +21,7 @@ import static markmixson.prioritysort.RedisPrioritySortClientTestData.CLOCK;
 import static markmixson.prioritysort.RedisPrioritySortClientTestData.GENERATOR;
 import static markmixson.prioritysort.RedisPrioritySortClientTestData.RANDOM;
 
-public class RedisPrioritySortMutationClientLargeAddTest extends RedisPrioritySortClientTest {
+class RedisPrioritySortMutationClientLargeAddTest extends RedisPrioritySortClientTest {
 
     /**
      * Increasing this value can cause problems with Redis.
@@ -32,15 +31,14 @@ public class RedisPrioritySortMutationClientLargeAddTest extends RedisPrioritySo
     private static final int LARGE_DATA_COUNT = 1_500_000;
     private static final String LARGE_ADD_SUFFIX = "largeadd";
     private static final int[] ALL_SELECTED = IntStream.range(0, LARGE_RULE_COUNT).toArray();
-    private static final RuleMatchResults HIGHEST_POSSIBLE = RuleMatchResults.builder()
-            .matched(GENERATOR.generate(ALL_SELECTED, LARGE_RULE_COUNT))
-            .date(ZonedDateTime.ofInstant(CLOCK.instant(), CLOCK.getZone()))
-            .id(Long.MAX_VALUE)
-            .build();
+    private static final RuleMatchResults HIGHEST_POSSIBLE = new RuleMatchResults(
+            GENERATOR.generate(ALL_SELECTED, LARGE_RULE_COUNT),
+            ZonedDateTime.ofInstant(CLOCK.instant(), CLOCK.getZone()),
+            Long.MAX_VALUE);
 
     @Test
     @EnabledIfEnvironmentVariable(named = "RUN_BIG_TESTS", matches = "true")
-    void testLargeNumberOfAdds() {
+    void testLargeNumberOfAdds() throws InterruptedException {
         StepVerifier.create(getClients().getMutation().addOrUpdate(LARGE_ADD_SUFFIX, HIGHEST_POSSIBLE))
                 .expectNext(1L)
                 .expectComplete()
@@ -56,8 +54,7 @@ public class RedisPrioritySortMutationClientLargeAddTest extends RedisPrioritySo
                 .verify();
     }
 
-    @SneakyThrows(InterruptedException.class)
-    private void doLargeNumberOfAdds() {
+    private void doLargeNumberOfAdds() throws InterruptedException {
         final var results = getRandomIds().stream()
                 .<Callable<Void>>map(id -> () -> {
                     getClients().getMutation().addOrUpdate(LARGE_ADD_SUFFIX, getRandomRuleMatchResults(id)).block();
@@ -70,13 +67,11 @@ public class RedisPrioritySortMutationClientLargeAddTest extends RedisPrioritySo
         }
     }
 
-    private RuleMatchResults getRandomRuleMatchResults(@NonNull final Long id) {
+    private RuleMatchResults getRandomRuleMatchResults(@NotNull final Long id) {
         final var epochSecond = RANDOM.nextLong(CLOCK.instant().getEpochSecond());
-        return RuleMatchResults.builder()
-                .matched(GENERATOR.generate(getRandomMatches(), LARGE_RULE_COUNT))
-                .date(ZonedDateTime.ofInstant(Instant.ofEpochSecond(epochSecond), ZoneId.of("UTC")))
-                .id(id)
-                .build();
+        return new RuleMatchResults(GENERATOR.generate(getRandomMatches(), LARGE_RULE_COUNT),
+                ZonedDateTime.ofInstant(Instant.ofEpochSecond(epochSecond), ZoneId.of("UTC")),
+                id);
     }
 
     private int[] getRandomMatches() {
@@ -89,8 +84,8 @@ public class RedisPrioritySortMutationClientLargeAddTest extends RedisPrioritySo
                 .toArray();
     }
 
-    private void randomizeMatches(@NonNull final ArrayList<Integer> matches) {
-        for (var i = matches.size() - 1; i >= 0; i--) {
+    private void randomizeMatches(@NotNull final ArrayList<Integer> matches) {
+        for (int i = matches.size() - 1; i >= 0; i--) {
             if (!RANDOM.nextBoolean()) {
                 matches.remove(i);
             }

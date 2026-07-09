@@ -3,8 +3,8 @@ package markmixson.prioritysort;
 import io.lettuce.core.ScriptOutputType;
 import io.lettuce.core.api.StatefulRedisConnection;
 import io.lettuce.core.support.AsyncPool;
-import lombok.NonNull;
 import org.intellij.lang.annotations.Language;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
@@ -56,22 +56,25 @@ public class RedisPrioritySortMutationClient
     }
 
     @Override
-    public Mono<Long> addOrUpdate(final String keySuffix, @NonNull final RuleMatchResults results) {
+    public Mono<Long> addOrUpdate(final String keySuffix, @NotNull final RuleMatchResults results) {
         final var keys = new String[]{getIndexName(keySuffix), getSetName(keySuffix), results.id().toString()};
         final var values = new byte[][]{results.toByteArray()};
-        return runMany(redis -> redis.<Long>eval(ADD_UPDATE_LUA_SCRIPT, ScriptOutputType.INTEGER, keys, values))
+        return runMany(redis ->
+                redis.<Long>eval(ADD_UPDATE_LUA_SCRIPT, ScriptOutputType.INTEGER, keys, values))
                 .next();
     }
 
     @Override
     public Mono<Long> delete(final String keySuffix, final long id) {
         final var keys = new String[]{getIndexName(keySuffix), getSetName(keySuffix), Long.toString(id)};
-        return runMany(redis -> redis.<Long>eval(DEL_LUA_SCRIPT, ScriptOutputType.INTEGER, keys))
+        return runMany(redis ->
+                redis.<Long>eval(DEL_LUA_SCRIPT, ScriptOutputType.INTEGER, keys))
                 .next();
     }
 
     @Override
     public Mono<Long> clear(final String keySuffix) {
-        return runSingle(redis -> redis.del(getIndexName(keySuffix), getSetName(keySuffix)));
+        return runSingle(redis ->
+                redis.del(getIndexName(keySuffix), getSetName(keySuffix)));
     }
 }

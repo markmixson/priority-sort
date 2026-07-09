@@ -14,7 +14,13 @@ import reactor.core.publisher.Mono;
 public class RedisPrioritySortQueryClient
         extends RedisPrioritySortClient
         implements PrioritySortQueryClient {
+    /**
+     * Start index.
+     */
     private static final int START = 0;
+    /**
+     * Single value.
+     */
     private static final int SINGLE = 1;
 
     /**
@@ -52,12 +58,14 @@ public class RedisPrioritySortQueryClient
 
     @Override
     public Mono<Long> getIndexCount(final String keySuffix) {
-        return runSingle(redis -> redis.zcount(getIndexName(keySuffix), Range.unbounded()));
+        return runSingle(redis ->
+                redis.zcount(getIndexName(keySuffix), Range.unbounded()));
     }
 
     @Override
     public Mono<RuleMatchResults> getRuleMatchResults(final String keySuffix, final long id) {
-        return runSingle(redis -> redis.hget(getSetName(keySuffix), Long.toString(id)))
+        return runSingle(redis ->
+                redis.hget(getSetName(keySuffix), Long.toString(id)))
                 .map(RuleMatchResults::getRuleMatchResults);
     }
 }

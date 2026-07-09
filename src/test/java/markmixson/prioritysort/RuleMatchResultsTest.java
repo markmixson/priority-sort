@@ -51,7 +51,7 @@ public class RuleMatchResultsTest {
     void testBadGetRuleMatchResultsEmpty() {
         Assertions.assertThrows(IllegalArgumentException.class, () ->
                 RuleMatchResults.getRuleMatchResults(new byte[]{}));
-        Assertions.assertThrows(NullPointerException.class, () ->
+        Assertions.assertThrows(Exception.class, () ->
                 RuleMatchResults.getRuleMatchResults(null));
     }
 

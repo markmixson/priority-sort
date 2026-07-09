@@ -1,6 +1,6 @@
 package markmixson.prioritysort;
 
-import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
 import reactor.core.publisher.Mono;
 
 /**
@@ -15,7 +15,7 @@ public interface PrioritySortMutationClient {
      * @param results   the results.
      * @return the number of updated or added items.
      */
-    Mono<Long> addOrUpdate(String keySuffix, @NonNull RuleMatchResults results);
+    Mono<Long> addOrUpdate(String keySuffix, @NotNull RuleMatchResults results);
 
     /**
      * Removes a {@link RuleMatchResults} from the index.

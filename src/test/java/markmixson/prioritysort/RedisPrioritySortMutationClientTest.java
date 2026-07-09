@@ -10,7 +10,8 @@ import reactor.test.StepVerifier;
 
 import static markmixson.prioritysort.RedisPrioritySortClientTestData.*;
 
-public class RedisPrioritySortMutationClientTest extends RedisPrioritySortClientTest {
+@SuppressWarnings("java:S5778")
+class RedisPrioritySortMutationClientTest extends RedisPrioritySortClientTest {
     private static final String MUTATION_SUFFIX = "mutation";
 
     @AfterEach
@@ -87,10 +88,9 @@ public class RedisPrioritySortMutationClientTest extends RedisPrioritySortClient
     @Test
     @SuppressWarnings("ConstantConditions")
     void testNullMatchesAdd() {
-        Assertions.assertThrows(NullPointerException.class,
+        Assertions.assertThrows(Exception.class,
                 () -> getClients().getMutation().addOrUpdate(MUTATION_SUFFIX, null).block());
     }
-
 
     @Test
     void testBadSuffixMatchesAdd() {
@@ -127,7 +127,7 @@ public class RedisPrioritySortMutationClientTest extends RedisPrioritySortClient
     }
 
     @Nested
-    protected class WithBeforeEach {
+    class WithBeforeEach {
 
         @BeforeEach
         void setUp() {

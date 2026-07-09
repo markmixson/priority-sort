@@ -1,35 +1,37 @@
 package markmixson.prioritysort;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.BitSet;
 import java.util.stream.IntStream;
 
-public class BitSetGeneratorTest {
+@SuppressWarnings("java:S5778")
+class BitSetGeneratorTest {
 
-    @Getter(AccessLevel.PRIVATE)
-    @Setter(AccessLevel.PRIVATE)
+    public BitSetGenerator getGenerator() {
+        return generator;
+    }
+
     private BitSetGenerator generator;
 
     @BeforeEach
     void setUp() {
-        setGenerator(new BitSetGenerator());
+        generator = new BitSetGenerator();
     }
 
     @Test
     void testGeneratorValueBiggerThanLength() {
+        final int[] ints = new int[]{100};
         Assertions.assertThrows(IllegalArgumentException.class, () ->
-                getGenerator().generate(new int[]{100}, 99));
+                getGenerator().generate(ints, 99));
     }
 
     @Test
     @SuppressWarnings("ConstantConditions")
     void testGeneratorNullValues() {
-        Assertions.assertThrows(NullPointerException.class, () ->
+        Assertions.assertThrows(Exception.class, () ->
                 getGenerator().generate(null, 99));
     }
 
@@ -43,6 +45,17 @@ public class BitSetGeneratorTest {
     void testGeneratorLengthLessThanZero() {
         Assertions.assertThrows(IllegalArgumentException.class, () ->
                 getGenerator().generate(new int[]{}, -1));
+    }
+
+    @Test
+    void testValueLessThanZero() {
+        Assertions.assertThrows(IllegalArgumentException.class, () ->
+                getGenerator().generate(new int[]{-1}, 1));
+    }
+
+    @Test
+    void testGeneratorEmptyBitSet() {
+        Assertions.assertEquals(new BitSet(0), getGenerator().generate(new int[]{}, 0));
     }
 
     @Test

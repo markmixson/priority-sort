@@ -9,9 +9,6 @@ import io.lettuce.core.codec.StringCodec;
 import io.lettuce.core.support.AsyncConnectionPoolSupport;
 import io.lettuce.core.support.AsyncPool;
 import io.lettuce.core.support.BoundedPoolConfig;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,8 +17,6 @@ import org.springframework.context.annotation.Configuration;
  * Redis connection pool settings.
  */
 @Configuration
-@Getter(AccessLevel.PRIVATE)
-@NoArgsConstructor
 public class PrioritySortConfiguration {
 
     /**
@@ -51,5 +46,13 @@ public class PrioritySortConfiguration {
                 .maxTotal(Runtime.getRuntime().availableProcessors())
                 .build();
         return AsyncConnectionPoolSupport.createBoundedObjectPool(() -> client.connectAsync(codec, uri), config);
+    }
+
+    public String getRedisHost() {
+        return redisHost;
+    }
+
+    public Integer getRedisPort() {
+        return redisPort;
     }
 }
