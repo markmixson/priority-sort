@@ -6,7 +6,8 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.BitSet;
 
 /**
  * Gets a {@link BitSet} that can be used inside {@link RuleMatchResults}.
@@ -43,7 +44,7 @@ public class BitSetGenerator {
      * @param length the requested length.
      * @return the bitset
      */
-    public BitSet generate(final int @NotNull [] values, final int length) {
+    public @NotNull BitSet generate(final int @NotNull [] values, final int length) {
         Preconditions.checkArgument(values.length <= length);
         Preconditions.checkArgument(Arrays.stream(values).noneMatch(value -> value < 0
                 || value > length - 1));
@@ -52,18 +53,16 @@ public class BitSetGenerator {
                 : generateFromTrueBits(values, length);
     }
 
-    private BitSet generateFromTrueBits(final int @NotNull [] values, final int length) {
+    private @NotNull BitSet generateFromTrueBits(final int @NotNull [] values, final int length) {
         final int trueBits = length % Byte.SIZE == 0
                 ? length
                 : length + Byte.SIZE - length % Byte.SIZE;
         final var bitSet = (BitSet) getBitSetCache().getUnchecked(trueBits).clone();
-        for (final int value : values) {
-            bitSet.flip(value);
-        }
+        Arrays.stream(values).forEach(bitSet::flip);
         return bitSet;
     }
 
-    public LoadingCache<Integer, BitSet> getBitSetCache() {
+    private @NotNull LoadingCache<Integer, BitSet> getBitSetCache() {
         return bitSetCache;
     }
 }

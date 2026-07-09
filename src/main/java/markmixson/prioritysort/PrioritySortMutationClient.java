@@ -15,7 +15,8 @@ public interface PrioritySortMutationClient {
      * @param results   the results.
      * @return the number of updated or added items.
      */
-    Mono<Long> addOrUpdate(String keySuffix, @NotNull RuleMatchResults results);
+    @NotNull
+    Mono<Long> addOrUpdate(@NotNull String keySuffix, @NotNull RuleMatchResults results);
 
     /**
      * Removes a {@link RuleMatchResults} from the index.
@@ -24,7 +25,8 @@ public interface PrioritySortMutationClient {
      * @param id        the id to remove.
      * @return a {@link Mono} representing the number of deleted items.
      */
-    Mono<Long> delete(String keySuffix, long id);
+    @NotNull
+    Mono<Long> delete(@NotNull String keySuffix, long id);
 
     /**
      * Clears all data from the index and the hashset.
@@ -32,5 +34,6 @@ public interface PrioritySortMutationClient {
      * @param keySuffix the suffix to use on the redis key.
      * @return a {@link Mono} representing the number elements deleted.
      */
-    Mono<Long> clear(String keySuffix);
+    @NotNull
+    Mono<Long> clear(@NotNull String keySuffix);
 }

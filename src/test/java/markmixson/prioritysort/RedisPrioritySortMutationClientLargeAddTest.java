@@ -22,7 +22,6 @@ import static markmixson.prioritysort.RedisPrioritySortClientTestData.GENERATOR;
 import static markmixson.prioritysort.RedisPrioritySortClientTestData.RANDOM;
 
 class RedisPrioritySortMutationClientLargeAddTest extends RedisPrioritySortClientTest {
-
     /**
      * Increasing this value can cause problems with Redis.
      */
@@ -67,14 +66,14 @@ class RedisPrioritySortMutationClientLargeAddTest extends RedisPrioritySortClien
         }
     }
 
-    private RuleMatchResults getRandomRuleMatchResults(@NotNull final Long id) {
+    private @NotNull RuleMatchResults getRandomRuleMatchResults(final @NotNull Long id) {
         final var epochSecond = RANDOM.nextLong(CLOCK.instant().getEpochSecond());
         return new RuleMatchResults(GENERATOR.generate(getRandomMatches(), LARGE_RULE_COUNT),
                 ZonedDateTime.ofInstant(Instant.ofEpochSecond(epochSecond), ZoneId.of("UTC")),
                 id);
     }
 
-    private int[] getRandomMatches() {
+    private int @NotNull [] getRandomMatches() {
         final var matches = new ArrayList<Integer>();
         IntStream.range(0, LARGE_RULE_COUNT).forEach(matches::add);
         Collections.shuffle(matches, RANDOM);
@@ -84,7 +83,7 @@ class RedisPrioritySortMutationClientLargeAddTest extends RedisPrioritySortClien
                 .toArray();
     }
 
-    private void randomizeMatches(@NotNull final ArrayList<Integer> matches) {
+    private void randomizeMatches(final @NotNull List<Integer> matches) {
         for (int i = matches.size() - 1; i >= 0; i--) {
             if (!RANDOM.nextBoolean()) {
                 matches.remove(i);
@@ -92,7 +91,7 @@ class RedisPrioritySortMutationClientLargeAddTest extends RedisPrioritySortClien
         }
     }
 
-    private List<Long> getRandomIds() {
+    private @NotNull List<Long> getRandomIds() {
         final var matches = new ArrayList<Long>();
         LongStream.range(0, LARGE_DATA_COUNT).forEach(matches::add);
         Collections.shuffle(matches, RANDOM);

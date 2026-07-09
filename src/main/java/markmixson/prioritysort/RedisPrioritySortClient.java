@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import io.lettuce.core.api.StatefulRedisConnection;
 import io.lettuce.core.api.reactive.RedisReactiveCommands;
 import io.lettuce.core.support.AsyncPool;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Value;
 import reactor.core.publisher.Flux;
@@ -16,7 +17,6 @@ import java.util.function.Function;
  */
 @SuppressWarnings("SpringElInspection")
 public class RedisPrioritySortClient {
-
     /**
      * Name format for strings.
      */
@@ -26,26 +26,28 @@ public class RedisPrioritySortClient {
      * Prefix for indexes.
      */
     @Value("${priority-sort.index-name-prefix:prioritysort}")
+    @Nullable
     private String indexNamePrefix;
 
     /**
      * Prefix for sets.
      */
     @Value("${priority-sort.set-name-prefix:prioritysort.content}")
+    @Nullable
     private String setNamePrefix;
-
 
     /**
      * Connection pool.
      */
+    @NotNull
     private final AsyncPool<StatefulRedisConnection<String, byte[]>> pool;
-
 
     /**
      * Main constructor
+     *
      * @param pool connection pool
      */
-    public RedisPrioritySortClient(final AsyncPool<StatefulRedisConnection<String, byte[]>> pool) {
+    public RedisPrioritySortClient(final @NotNull AsyncPool<StatefulRedisConnection<String, byte[]>> pool) {
         this.pool = pool;
     }
 
@@ -56,7 +58,8 @@ public class RedisPrioritySortClient {
      * @param <T>   the type of the result
      * @return the result
      */
-    protected <T> Mono<T> runSingle(final Function<RedisReactiveCommands<String, byte[]>, Mono<T>> toRun) {
+    @NotNull <T> Mono<T> runSingle(final @NotNull Function<RedisReactiveCommands<String, byte[]>,
+            @NotNull Mono<T>> toRun) {
         return Mono.fromFuture(() -> getPool().acquire())
                 .flatMap(connection -> toRun.apply(connection.reactive())
                         .doFinally(_ -> getPool().release(connection)));
@@ -69,7 +72,8 @@ public class RedisPrioritySortClient {
      * @param <T>   the type of the result
      * @return the results
      */
-    protected <T> Flux<T> runMany(final Function<RedisReactiveCommands<String, byte[]>, Flux<T>> toRun) {
+    @NotNull <T> Flux<T> runMany(final @NotNull Function<RedisReactiveCommands<String, byte[]>,
+            @NotNull Flux<T>> toRun) {
         return Mono.fromFuture(() -> getPool().acquire())
                 .flatMapMany(connection -> toRun.apply(connection.reactive())
                         .doFinally(_ -> getPool().release(connection)));
@@ -81,7 +85,8 @@ public class RedisPrioritySortClient {
      * @param suffix suffix to add to name.
      * @return the index name.
      */
-    protected String getIndexName(final String suffix) {
+    @NotNull
+    String getIndexName(final @Nullable String suffix) {
         return getName(getIndexNamePrefix(), suffix);
     }
 
@@ -91,25 +96,26 @@ public class RedisPrioritySortClient {
      * @param suffix suffix to add to name.
      * @return the set name.
      */
-    protected String getSetName(final String suffix) {
+    @NotNull
+    String getSetName(final @Nullable String suffix) {
         return getName(getSetNamePrefix(), suffix);
     }
 
-    private String getName(final @Nullable String prefix, final @Nullable String suffix) {
+    private @NotNull String getName(final @Nullable String prefix, final @Nullable String suffix) {
         Preconditions.checkArgument(prefix != null && !prefix.isBlank());
         Preconditions.checkArgument(suffix != null && !suffix.isBlank());
         return String.format(NAME_FORMAT, prefix, suffix);
     }
 
-    public String getIndexNamePrefix() {
+    private @Nullable String getIndexNamePrefix() {
         return indexNamePrefix;
     }
 
-    public String getSetNamePrefix() {
+    private @Nullable String getSetNamePrefix() {
         return setNamePrefix;
     }
 
-    public AsyncPool<StatefulRedisConnection<String, byte[]>> getPool() {
+    private @NotNull AsyncPool<StatefulRedisConnection<String, byte[]>> getPool() {
         return pool;
     }
 }

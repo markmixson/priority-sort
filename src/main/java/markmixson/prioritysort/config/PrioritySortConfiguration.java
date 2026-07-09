@@ -9,6 +9,7 @@ import io.lettuce.core.codec.StringCodec;
 import io.lettuce.core.support.AsyncConnectionPoolSupport;
 import io.lettuce.core.support.AsyncPool;
 import io.lettuce.core.support.BoundedPoolConfig;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,12 +19,12 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 public class PrioritySortConfiguration {
-
     /**
      * Redis host name.
      */
     @SuppressWarnings("SpringElInspection")
     @Value("${spring.data.redis.host:localhost}")
+    @NotNull
     private String redisHost;
 
     /**
@@ -48,11 +49,11 @@ public class PrioritySortConfiguration {
         return AsyncConnectionPoolSupport.createBoundedObjectPool(() -> client.connectAsync(codec, uri), config);
     }
 
-    public String getRedisHost() {
+    public @NotNull String getRedisHost() {
         return redisHost;
     }
 
-    public Integer getRedisPort() {
+    public int getRedisPort() {
         return redisPort;
     }
 }

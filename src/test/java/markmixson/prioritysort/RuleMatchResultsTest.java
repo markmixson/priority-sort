@@ -1,5 +1,6 @@
 package markmixson.prioritysort;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -12,7 +13,7 @@ import java.util.BitSet;
 import java.util.Random;
 import java.util.stream.IntStream;
 
-public class RuleMatchResultsTest {
+class RuleMatchResultsTest {
     private static final int RULESET_SIZE = 203;
     private static final Random RANDOM = new Random();
     private static final String END_TIME = "2023-05-08T00:46:24.00Z";
@@ -20,7 +21,7 @@ public class RuleMatchResultsTest {
     private static final Clock CLOCK = Clock.fixed(END_INSTANT, ZoneId.of("UTC"));
     private static final int ITERATIONS = 100;
 
-    public static RuleMatchResults getRandomRuleMatchResults(final int ruleSize) {
+    public static @NotNull RuleMatchResults getRandomRuleMatchResults(final int ruleSize) {
         final var matched = getRandomBitSet(ruleSize);
         final var epochSecond = RANDOM.nextLong(CLOCK.instant().getEpochSecond());
         final var date =
@@ -62,7 +63,7 @@ public class RuleMatchResultsTest {
         Assertions.assertEquals(testValue, result);
     }
 
-    private static BitSet getRandomBitSet(final int ruleSize) {
+    private static @NotNull BitSet getRandomBitSet(final int ruleSize) {
         final var matched = new BitSet(ruleSize);
         IntStream.range(0, ruleSize)
                 .filter(ignored -> RANDOM.nextBoolean())

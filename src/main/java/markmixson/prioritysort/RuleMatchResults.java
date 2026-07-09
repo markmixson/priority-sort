@@ -35,6 +35,7 @@ public record RuleMatchResults(
      * @param bytes the bytes to convert.
      * @return the {@link RuleMatchResults}.
      */
+    @NotNull
     public static RuleMatchResults getRuleMatchResults(final byte @NotNull [] bytes) {
         Preconditions.checkArgument(bytes.length >= NON_MATCHED_BYTES_SIZE);
         final var input = ByteBuffer.wrap(bytes);
@@ -53,7 +54,7 @@ public record RuleMatchResults(
      *
      * @return a {@link byte[]} representing the {@link RuleMatchResults}.
      */
-    public byte[] toByteArray() {
+    public byte @NotNull [] toByteArray() {
         final var buffer = ByteBuffer.allocate(NON_MATCHED_BYTES_SIZE)
                 .putLong(date().toEpochSecond())
                 .putLong(id());

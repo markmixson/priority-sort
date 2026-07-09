@@ -17,20 +17,21 @@ import static markmixson.prioritysort.RedisPrioritySortClientTestData.THIRD;
 @SpringBootTest
 @ContextConfiguration(initializers = RedisInitializer.class)
 @SuppressWarnings("java:S2187")
-public class RedisPrioritySortClientTest {
-
-    protected static final List<RuleMatchResults> RULE_MATCH_RESULTS_SCRAMBLED =
+class RedisPrioritySortClientTest {
+    static final List<RuleMatchResults> RULE_MATCH_RESULTS_SCRAMBLED =
             List.of(THIRD, FOURTH, FIRST, FIFTH, SIXTH, SECOND);
 
     @Autowired
+    @NotNull
     RedisPrioritySortClients clients;
 
-    protected void doAddOrUpdateTestData(@NotNull final String suffix) {
+    void doAddOrUpdateTestData(final @NotNull String suffix) {
         RULE_MATCH_RESULTS_SCRAMBLED.parallelStream()
                 .forEach(result -> getClients().getMutation().addOrUpdate(suffix, result)
                         .block());
     }
 
+    @NotNull
     public RedisPrioritySortClients getClients() {
         return clients;
     }

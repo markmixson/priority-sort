@@ -22,7 +22,7 @@ public class RedisInitializer implements ApplicationContextInitializer<Configura
                     Runtime.getRuntime().availableProcessors() / 2));
 
     @Override
-    public void initialize(@NotNull final ConfigurableApplicationContext context) {
+    public void initialize(final @NotNull ConfigurableApplicationContext context) {
         final var binding = String.format("%d:%d", CONTAINER_REDIS_PORT, CONTAINER_REDIS_PORT);
         REDIS.setPortBindings(List.of(binding));
         REDIS.start();

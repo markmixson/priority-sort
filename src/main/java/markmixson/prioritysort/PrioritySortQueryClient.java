@@ -1,5 +1,6 @@
 package markmixson.prioritysort;
 
+import org.jetbrains.annotations.NotNull;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -14,7 +15,8 @@ public interface PrioritySortQueryClient {
      * @param keySuffix the suffix to use on the redis key.
      * @return a {@link Mono} representing the id with the top priority.
      */
-    Mono<Long> getTopPriority(String keySuffix);
+    @NotNull
+    Mono<Long> getTopPriority(@NotNull String keySuffix);
 
     /**
      * Gets the top N priorities ids from the index in order.
@@ -24,7 +26,8 @@ public interface PrioritySortQueryClient {
      * @param count     the number of priorities to get.
      * @return a {@link Flux} representing the top N priority ids.
      */
-    Flux<Long> getTopPriorities(String keySuffix, long count);
+    @NotNull
+    Flux<Long> getTopPriorities(@NotNull String keySuffix, long count);
 
     /**
      * Gets the top priority id from the index.
@@ -32,7 +35,8 @@ public interface PrioritySortQueryClient {
      * @param keySuffix the suffix to use on the redis key.
      * @return a {@link Mono} representing the id with the top priority.
      */
-    Mono<RuleMatchResults> getTopPriorityRuleMatchResult(String keySuffix);
+    @NotNull
+    Mono<RuleMatchResults> getTopPriorityRuleMatchResult(@NotNull String keySuffix);
 
     /**
      * Gets the top N priorities ids from the index in order.
@@ -42,7 +46,8 @@ public interface PrioritySortQueryClient {
      * @param count     the number of priorities to get.
      * @return a {@link Flux} representing the top N priority ids.
      */
-    Flux<RuleMatchResults> getTopPriorityRuleMatchResults(String keySuffix, long count);
+    @NotNull
+    Flux<RuleMatchResults> getTopPriorityRuleMatchResults(@NotNull String keySuffix, long count);
 
     /**
      * Gets the overall count of elements in the index.
@@ -50,7 +55,8 @@ public interface PrioritySortQueryClient {
      * @param keySuffix the suffix to use on the redis key.
      * @return a {@link Mono} representing the count of priorities in the index.
      */
-    Mono<Long> getIndexCount(String keySuffix);
+    @NotNull
+    Mono<Long> getIndexCount(@NotNull String keySuffix);
 
     /**
      * Gets {@link RuleMatchResults} based on the given id.
@@ -59,5 +65,6 @@ public interface PrioritySortQueryClient {
      * @param id        the id to look up.
      * @return the results.
      */
-    Mono<RuleMatchResults> getRuleMatchResults(String keySuffix, long id);
+    @NotNull
+    Mono<RuleMatchResults> getRuleMatchResults(@NotNull String keySuffix, long id);
 }

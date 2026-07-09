@@ -15,6 +15,10 @@ public class RedisPrioritySortClientTestData {
     public static final BitSetGenerator GENERATOR = new BitSetGenerator();
     public static final Random RANDOM = new Random();
 
+    private RedisPrioritySortClientTestData() {
+        // empty
+    }
+
     /**
      * All Fibonacci numbers below 64.
      */
