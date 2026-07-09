@@ -18,137 +18,122 @@ public class RedisPrioritySortClientTestData {
     /**
      * All Fibonacci numbers below 64.
      */
-    public static final RuleMatchResults FIRST = RuleMatchResults.builder()
-            .matched(GENERATOR.generate(new int[]{0, 1, 2, 3, 5, 8, 13, 21, 34, 55}, BITSET_LENGTH))
-            .date(ZonedDateTime.ofInstant(CLOCK.instant(), CLOCK.getZone()))
-            .id(1356357L)
-            .build();
+    public static final RuleMatchResults FIRST = new RuleMatchResults(
+            GENERATOR.generate(new int[]{0, 1, 2, 3, 5, 8, 13, 21, 34, 55}, BITSET_LENGTH),
+            ZonedDateTime.ofInstant(CLOCK.instant(), CLOCK.getZone()),
+            1356357L);
 
     /**
      * Minus 55.
      */
-    public static final RuleMatchResults SECOND = RuleMatchResults.builder()
-            .matched(GENERATOR.generate(new int[]{0, 1, 2, 3, 5, 8, 13, 21, 34}, BITSET_LENGTH))
-            .date(ZonedDateTime.ofInstant(CLOCK.instant(), CLOCK.getZone()))
-            .id(5367367L)
-            .build();
+    public static final RuleMatchResults SECOND = new RuleMatchResults(
+            GENERATOR.generate(new int[]{0, 1, 2, 3, 5, 8, 13, 21, 34}, BITSET_LENGTH),
+            ZonedDateTime.ofInstant(CLOCK.instant(), CLOCK.getZone()),
+            5367367L);
 
     /**
      * Minus 8.
      */
-    public static final RuleMatchResults THIRD = RuleMatchResults.builder()
-            .matched(GENERATOR.generate(new int[]{0, 1, 2, 3, 5, 13, 21, 34, 55}, BITSET_LENGTH))
-            .date(ZonedDateTime.ofInstant(CLOCK.instant(), CLOCK.getZone()))
-            .id(4356356L)
-            .build();
+    public static final RuleMatchResults THIRD = new RuleMatchResults(
+            GENERATOR.generate(new int[]{0, 1, 2, 3, 5, 13, 21, 34, 55}, BITSET_LENGTH),
+            ZonedDateTime.ofInstant(CLOCK.instant(), CLOCK.getZone()),
+            4356356L);
 
     /**
      * Minus 0.
      */
-    public static final RuleMatchResults FOURTH = RuleMatchResults.builder()
-            .matched(GENERATOR.generate(new int[]{1, 2, 3, 5, 8, 13, 21, 34, 55}, BITSET_LENGTH))
-            .date(ZonedDateTime.ofInstant(CLOCK.instant(), CLOCK.getZone()))
-            .id(-12314L)
-            .build();
+    public static final RuleMatchResults FOURTH = new RuleMatchResults(
+            GENERATOR.generate(new int[]{1, 2, 3, 5, 8, 13, 21, 34, 55}, BITSET_LENGTH),
+            ZonedDateTime.ofInstant(CLOCK.instant(), CLOCK.getZone()),
+            -12314L);
 
     /**
      * Minus 0 and 10 seconds later.
      */
-    public static final RuleMatchResults FIFTH = RuleMatchResults.builder()
-            .matched(GENERATOR.generate(new int[]{1, 2, 3, 5, 8, 13, 21, 34, 55}, BITSET_LENGTH))
-            .date(ZonedDateTime.ofInstant(CLOCK.instant().plus(Duration.ofSeconds(10)), CLOCK.getZone()))
-            .id(33573573567356356L)
-            .build();
+    public static final RuleMatchResults FIFTH = new RuleMatchResults(
+            GENERATOR.generate(new int[]{1, 2, 3, 5, 8, 13, 21, 34, 55}, BITSET_LENGTH),
+            ZonedDateTime.ofInstant(CLOCK.instant().plus(Duration.ofSeconds(10)), CLOCK.getZone()),
+            33573573567356356L);
 
     /**
      * Minus 0 and 55.
      */
-    public static final RuleMatchResults SIXTH = RuleMatchResults.builder()
-            .matched(GENERATOR.generate(new int[]{1, 2, 3, 5, 8, 13, 21, 34}, BITSET_LENGTH))
-            .date(ZonedDateTime.ofInstant(CLOCK.instant(), CLOCK.getZone()))
-            .id(0L)
-            .build();
+    public static final RuleMatchResults SIXTH = new RuleMatchResults(
+            GENERATOR.generate(new int[]{1, 2, 3, 5, 8, 13, 21, 34}, BITSET_LENGTH),
+            ZonedDateTime.ofInstant(CLOCK.instant(), CLOCK.getZone()),
+            0L);
 
     /**
      * Updated first to have lowest results
      */
-    public static final RuleMatchResults UPDATED_FIRST = RuleMatchResults.builder()
-            .matched(GENERATOR.generate(new int[]{0}, BITSET_LENGTH))
-            .date(ZonedDateTime.ofInstant(CLOCK.instant(), CLOCK.getZone()))
-            .id(1356357L)
-            .build();
+    public static final RuleMatchResults UPDATED_FIRST = new RuleMatchResults(
+            GENERATOR.generate(new int[]{0}, BITSET_LENGTH),
+            ZonedDateTime.ofInstant(CLOCK.instant(), CLOCK.getZone()),
+            1356357L);
 
     /**
      * 1 match
      */
-    public static final RuleMatchResults ONE_MATCH = RuleMatchResults.builder()
-            .matched(GENERATOR.generate(new int[]{0}, 1))
-            .date(ZonedDateTime.ofInstant(CLOCK.instant(), CLOCK.getZone()))
-            .id(1L)
-            .build();
+    public static final RuleMatchResults ONE_MATCH = new RuleMatchResults(
+            GENERATOR.generate(new int[]{0}, 1),
+            ZonedDateTime.ofInstant(CLOCK.instant(), CLOCK.getZone()),
+            1L);
 
     /**
      * 0 matches
      */
-    public static final RuleMatchResults ZERO_MATCHES = RuleMatchResults.builder()
-            .matched(GENERATOR.generate(new int[]{}, 1))
-            .date(ZonedDateTime.ofInstant(CLOCK.instant().minus(Duration.ofSeconds(30)), CLOCK.getZone()))
-            .id(0L)
-            .build();
+    public static final RuleMatchResults ZERO_MATCHES = new RuleMatchResults(
+            GENERATOR.generate(new int[]{}, 1),
+            ZonedDateTime.ofInstant(CLOCK.instant().minus(Duration.ofSeconds(30)), CLOCK.getZone()),
+            0L);
 
     /**
      * 0 matches but later.
      */
-    public static final RuleMatchResults ZERO_MATCHES_EARLIER = RuleMatchResults.builder()
-            .matched(GENERATOR.generate(new int[]{}, 1))
-            .date(ZonedDateTime.ofInstant(CLOCK.instant().minus(Duration.ofDays(30)), CLOCK.getZone()))
-            .id(-1L)
-            .build();
+    public static final RuleMatchResults ZERO_MATCHES_EARLIER = new RuleMatchResults(
+            GENERATOR.generate(new int[]{}, 1),
+            ZonedDateTime.ofInstant(CLOCK.instant().minus(Duration.ofDays(30)), CLOCK.getZone()),
+            -1L);
 
     /**
      * 0 matches no length.
      */
-    public static final RuleMatchResults ZERO_MATCHES_NO_LENGTH = RuleMatchResults.builder()
-            .matched(GENERATOR.generate(new int[]{}, 0))
-            .date(ZonedDateTime.ofInstant(CLOCK.instant(), CLOCK.getZone()))
-            .id(-99999L)
-            .build();
+    public static final RuleMatchResults ZERO_MATCHES_NO_LENGTH = new RuleMatchResults(
+            GENERATOR.generate(new int[]{}, 0),
+            ZonedDateTime.ofInstant(CLOCK.instant(), CLOCK.getZone()),
+            -99999L);
 
     /**
      * 1 match, 1 didn't
      */
-    public static final RuleMatchResults ONE_MATCH_ONE_DID_NOT = RuleMatchResults.builder()
-            .matched(GENERATOR.generate(new int[]{1}, 2))
-            .date(ZonedDateTime.ofInstant(CLOCK.instant(), CLOCK.getZone()))
-            .id(113413532L)
-            .build();
+    public static final RuleMatchResults ONE_MATCH_ONE_DID_NOT = new RuleMatchResults(
+            GENERATOR.generate(new int[]{1}, 2),
+            ZonedDateTime.ofInstant(CLOCK.instant(), CLOCK.getZone()),
+            113413532L);
 
     /**
      * 2 matches
      */
-    public static final RuleMatchResults TWO_MATCHES = RuleMatchResults.builder()
-            .matched(GENERATOR.generate(new int[]{0, 1}, 2))
-            .date(ZonedDateTime.ofInstant(CLOCK.instant(), CLOCK.getZone()))
-            .id(1234234L)
-            .build();
+    public static final RuleMatchResults TWO_MATCHES = new RuleMatchResults(
+            GENERATOR.generate(new int[]{0, 1}, 2),
+            ZonedDateTime.ofInstant(CLOCK.instant(), CLOCK.getZone()),
+            1234234L);
 
     /**
      * 7 out of 8 matches
      */
-    public static final RuleMatchResults SEVEN_OUT_OF_EIGHT_MATCHES = RuleMatchResults.builder()
-            .matched(GENERATOR.generate(new int[]{0, 1, 2, 3, 4, 5, 6}, 8))
-            .date(ZonedDateTime.ofInstant(CLOCK.instant(), CLOCK.getZone()))
-            .id(-113413532L)
-            .build();
+    public static final RuleMatchResults SEVEN_OUT_OF_EIGHT_MATCHES = new RuleMatchResults(
+            GENERATOR.generate(new int[]{0, 1, 2, 3, 4, 5, 6}, 8),
+            ZonedDateTime.ofInstant(CLOCK.instant(), CLOCK.getZone()),
+            -113413532L);
 
     /**
      * 8 matches
      */
-    public static final RuleMatchResults EIGHT_MATCHES = RuleMatchResults.builder()
-            .matched(GENERATOR.generate(new int[]{0, 1, 2, 3, 4, 5, 6, 7}, 8))
-            .date(ZonedDateTime.ofInstant(CLOCK.instant(), CLOCK.getZone()))
-            .id(-1234234L)
-            .build();
+    public static final RuleMatchResults EIGHT_MATCHES = new RuleMatchResults(
+            GENERATOR.generate(new int[]{0, 1, 2, 3, 4, 5, 6, 7}, 8),
+            ZonedDateTime.ofInstant(CLOCK.instant(), CLOCK.getZone()),
+            -1234234L);
 
     /**
      * List of match results in expected order.

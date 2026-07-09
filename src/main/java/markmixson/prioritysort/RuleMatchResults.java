@@ -2,8 +2,7 @@ package markmixson.prioritysort;
 
 import com.google.common.base.Preconditions;
 import com.google.common.primitives.Bytes;
-import lombok.Builder;
-import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 import java.nio.ByteBuffer;
 import java.time.Instant;
@@ -14,11 +13,10 @@ import java.util.BitSet;
 /**
  * Record representing rule match results.
  */
-@Builder
 public record RuleMatchResults(
-        @NonNull BitSet matched,
-        @NonNull ZonedDateTime date,
-        @NonNull Long id) {
+        @NotNull BitSet matched,
+        @NotNull ZonedDateTime date,
+        @NotNull Long id) {
 
     private static final int NON_MATCHED_BYTES_SIZE = Long.BYTES * 2;
     private static final ZoneId UTC = ZoneId.of("UTC");
@@ -30,18 +28,17 @@ public record RuleMatchResults(
      * @param bytes the bytes to convert.
      * @return the {@link RuleMatchResults}.
      */
-    public static RuleMatchResults getRuleMatchResults(final byte @NonNull [] bytes) {
+    public static RuleMatchResults getRuleMatchResults(final byte @NotNull [] bytes) {
         Preconditions.checkArgument(bytes.length >= NON_MATCHED_BYTES_SIZE);
         final var input = ByteBuffer.wrap(bytes);
         final var matchedSize = input.array().length - NON_MATCHED_BYTES_SIZE;
         final var matchedSlice = input.slice(0, matchedSize);
         final var dateSlice = input.slice(matchedSize, Long.BYTES);
         final var idSlice = input.slice(matchedSize + Long.BYTES, Long.BYTES);
-        return RuleMatchResults.builder()
-                .matched(BitSet.valueOf(matchedSlice))
-                .date(ZonedDateTime.ofInstant(Instant.ofEpochSecond(dateSlice.getLong()), UTC))
-                .id(idSlice.getLong())
-                .build();
+        return new RuleMatchResults(
+                BitSet.valueOf(matchedSlice),
+                ZonedDateTime.ofInstant(Instant.ofEpochSecond(dateSlice.getLong()), UTC),
+                idSlice.getLong());
     }
 
     /**

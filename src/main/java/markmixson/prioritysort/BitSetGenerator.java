@@ -3,21 +3,13 @@ package markmixson.prioritysort;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import org.apache.commons.lang3.Range;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
-import java.util.BitSet;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Stream;
+import java.util.*;
 
 /**
  * Gets a {@link BitSet} that can be used inside {@link RuleMatchResults}.
  */
-@NoArgsConstructor
 public class BitSetGenerator {
 
     private static final int CACHE_SIZE = 1_000;
@@ -25,15 +17,14 @@ public class BitSetGenerator {
     /**
      * {@link BitSet} cache used when requesting same cardinality repeatedly.
      */
-    @Getter(AccessLevel.PRIVATE)
-    final private LoadingCache<Integer, BitSet> bitSetCache = CacheBuilder.newBuilder()
+    private final LoadingCache<Integer, BitSet> bitSetCache = CacheBuilder.newBuilder()
             .maximumSize(CACHE_SIZE)
             .concurrencyLevel(Runtime.getRuntime().availableProcessors())
-            .expireAfterAccess(1, TimeUnit.DAYS)
-            .build(CacheLoader.from(bits -> Stream.of(bits)
-                    .map(BitSet::new)
-                    .peek(bitSet -> bitSet.flip(0, bits))
-                    .findFirst().get()
+            .build(CacheLoader.from(bits -> {
+                        final var bitSet = new BitSet(bits);
+                        bitSet.flip(0, bits);
+                        return bitSet;
+                    }
             ));
 
     /**
@@ -48,16 +39,39 @@ public class BitSetGenerator {
      * @param length the requested length.
      * @return the bitset
      */
-    public BitSet generate(final int @NonNull [] values, final int length) {
-        return switch (values) {
-            case int[] v when v.length > length -> throw new IllegalArgumentException();
-            case int[] ignored when length == 0 -> new BitSet(0);
-            case int[] v when !Arrays.stream(v).allMatch(Range.between(0, length - 1)::contains) ->
-                    throw new IllegalArgumentException();
-            default -> Stream.of(length % Byte.SIZE == 0 ? length : length + Byte.SIZE - length % Byte.SIZE)
-                    .map(trueBits -> (BitSet) getBitSetCache().getUnchecked(trueBits).clone())
-                    .peek(bitSet -> Arrays.stream(values).forEach(bitSet::flip))
-                    .findFirst().get();
-        };
+    public BitSet generate(final int @NotNull [] values, final int length) {
+        if (length == 0) {
+            return new BitSet(0);
+        } else if (values.length > length
+                || isOutOfRange(values, length)) {
+            throw new IllegalArgumentException();
+        } else {
+            return generateFromTrueBits(values, length);
+        }
+    }
+
+    private boolean isOutOfRange(final int @NotNull [] values, final int length) {
+        for (final int value : values) {
+            if (value < 0
+                    || value > length - 1) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private BitSet generateFromTrueBits(final int @NotNull [] values, final int length) {
+        final int trueBits = length % Byte.SIZE == 0
+                ? length
+                : length + Byte.SIZE - length % Byte.SIZE;
+        final var bitSet = (BitSet) getBitSetCache().getUnchecked(trueBits).clone();
+        for (final int value : values) {
+            bitSet.flip(value);
+        }
+        return bitSet;
+    }
+
+    public LoadingCache<Integer, BitSet> getBitSetCache() {
+        return bitSetCache;
     }
 }

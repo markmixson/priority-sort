@@ -10,7 +10,8 @@ import reactor.test.StepVerifier;
 
 import static markmixson.prioritysort.RedisPrioritySortClientTestData.*;
 
-public class RedisPrioritySortMutationClientTest extends RedisPrioritySortClientTest {
+@SuppressWarnings("java:S5778")
+class RedisPrioritySortMutationClientTest extends RedisPrioritySortClientTest {
     private static final String MUTATION_SUFFIX = "mutation";
 
     @AfterEach
@@ -127,7 +128,7 @@ public class RedisPrioritySortMutationClientTest extends RedisPrioritySortClient
     }
 
     @Nested
-    protected class WithBeforeEach {
+    class WithBeforeEach {
 
         @BeforeEach
         void setUp() {

@@ -52,12 +52,14 @@ public class RedisPrioritySortQueryClient
 
     @Override
     public Mono<Long> getIndexCount(final String keySuffix) {
-        return runSingle(redis -> redis.zcount(getIndexName(keySuffix), Range.unbounded()));
+        return runSingle(redis ->
+                redis.zcount(getIndexName(keySuffix), Range.unbounded()));
     }
 
     @Override
     public Mono<RuleMatchResults> getRuleMatchResults(final String keySuffix, final long id) {
-        return runSingle(redis -> redis.hget(getSetName(keySuffix), Long.toString(id)))
+        return runSingle(redis ->
+                redis.hget(getSetName(keySuffix), Long.toString(id)))
                 .map(RuleMatchResults::getRuleMatchResults);
     }
 }

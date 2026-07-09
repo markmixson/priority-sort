@@ -1,6 +1,6 @@
 package markmixson.prioritysort;
 
-import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.testcontainers.containers.GenericContainer;
@@ -22,7 +22,7 @@ public class RedisInitializer implements ApplicationContextInitializer<Configura
                     Runtime.getRuntime().availableProcessors() / 2));
 
     @Override
-    public void initialize(@NonNull final ConfigurableApplicationContext context) {
+    public void initialize(@NotNull final ConfigurableApplicationContext context) {
         final var binding = String.format("%d:%d", CONTAINER_REDIS_PORT, CONTAINER_REDIS_PORT);
         REDIS.setPortBindings(List.of(binding));
         REDIS.start();
