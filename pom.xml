@@ -93,6 +93,11 @@
                     <execution>
                         <id>report</id>
                         <phase>test</phase>
+                        <configuration>
+                            <excludes>
+                                ${jacoco.excludes}
+                            </excludes>
+                        </configuration>
                         <goals>
                             <goal>report</goal>
                         </goals>
