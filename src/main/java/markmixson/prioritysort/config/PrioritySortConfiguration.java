@@ -29,8 +29,8 @@ public class PrioritySortConfiguration {
     /**
      * Redis port.
      */
-    @Value("#{new Integer('${spring.data.redis.port:6379}')}")
-    private Integer redisPort;
+    @Value("${spring.data.redis.port:6379}")
+    private int redisPort;
 
     /**
      * The Redis Connection Pool settings.

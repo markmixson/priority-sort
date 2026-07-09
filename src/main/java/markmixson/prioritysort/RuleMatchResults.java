@@ -38,7 +38,7 @@ public record RuleMatchResults(
     public static RuleMatchResults getRuleMatchResults(final byte @NotNull [] bytes) {
         Preconditions.checkArgument(bytes.length >= NON_MATCHED_BYTES_SIZE);
         final var input = ByteBuffer.wrap(bytes);
-        final var matchedSize = input.array().length - NON_MATCHED_BYTES_SIZE;
+        final int matchedSize = input.array().length - NON_MATCHED_BYTES_SIZE;
         final var matchedSlice = input.slice(0, matchedSize);
         final var dateSlice = input.slice(matchedSize, Long.BYTES);
         final var idSlice = input.slice(matchedSize + Long.BYTES, Long.BYTES);
