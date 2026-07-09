@@ -1,5 +1,6 @@
 package markmixson.prioritysort;
 
+import com.google.common.base.Preconditions;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -40,24 +41,12 @@ public class BitSetGenerator {
      * @return the bitset
      */
     public BitSet generate(final int @NotNull [] values, final int length) {
-        if (length == 0) {
-            return new BitSet(0);
-        } else if (values.length > length
-                || isOutOfRange(values, length)) {
-            throw new IllegalArgumentException();
-        } else {
-            return generateFromTrueBits(values, length);
-        }
-    }
-
-    private boolean isOutOfRange(final int @NotNull [] values, final int length) {
-        for (final int value : values) {
-            if (value < 0
-                    || value > length - 1) {
-                return true;
-            }
-        }
-        return false;
+        Preconditions.checkArgument(values.length <= length);
+        Preconditions.checkArgument(Arrays.stream(values).noneMatch(value -> value < 0
+                || value > length - 1));
+        return length == 0
+                ? new BitSet(0)
+                : generateFromTrueBits(values, length);
     }
 
     private BitSet generateFromTrueBits(final int @NotNull [] values, final int length) {
