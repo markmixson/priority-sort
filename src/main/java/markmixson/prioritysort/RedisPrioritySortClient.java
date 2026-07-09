@@ -17,6 +17,9 @@ import java.util.function.Function;
 @SuppressWarnings("SpringElInspection")
 public class RedisPrioritySortClient {
 
+    /**
+     * Name format for strings.
+     */
     private static final String NAME_FORMAT = "%s.%s";
 
     /**

@@ -14,7 +14,13 @@ import reactor.core.publisher.Mono;
 public class RedisPrioritySortQueryClient
         extends RedisPrioritySortClient
         implements PrioritySortQueryClient {
+    /**
+     * Start index.
+     */
     private static final int START = 0;
+    /**
+     * Single value.
+     */
     private static final int SINGLE = 1;
 
     /**

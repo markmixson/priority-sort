@@ -18,7 +18,14 @@ public record RuleMatchResults(
         @NotNull ZonedDateTime date,
         @NotNull Long id) {
 
+    /**
+     * Size of bytes for non-matched values.
+     */
     private static final int NON_MATCHED_BYTES_SIZE = Long.BYTES * 2;
+
+    /**
+     * UTC timezone id.
+     */
     private static final ZoneId UTC = ZoneId.of("UTC");
 
     /**

@@ -13,6 +13,9 @@ import java.util.*;
  */
 public class BitSetGenerator {
 
+    /**
+     * Sets a default cache size.
+     */
     private static final int CACHE_SIZE = 1_000;
 
     /**
