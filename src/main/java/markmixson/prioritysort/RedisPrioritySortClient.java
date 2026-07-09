@@ -86,7 +86,7 @@ public class RedisPrioritySortClient {
      * @return the index name.
      */
     @NotNull
-    String getIndexName(final @Nullable String suffix) {
+    String getIndexName(final @NotNull String suffix) {
         return getName(getIndexNamePrefix(), suffix);
     }
 
@@ -97,13 +97,13 @@ public class RedisPrioritySortClient {
      * @return the set name.
      */
     @NotNull
-    String getSetName(final @Nullable String suffix) {
+    String getSetName(final @NotNull String suffix) {
         return getName(getSetNamePrefix(), suffix);
     }
 
-    private @NotNull String getName(final @Nullable String prefix, final @Nullable String suffix) {
+    private @NotNull String getName(final @Nullable String prefix, final @NotNull String suffix) {
         Preconditions.checkArgument(prefix != null && !prefix.isBlank());
-        Preconditions.checkArgument(suffix != null && !suffix.isBlank());
+        Preconditions.checkArgument(!suffix.isBlank());
         return String.format(NAME_FORMAT, prefix, suffix);
     }
 

@@ -93,10 +93,11 @@ class RedisPrioritySortMutationClientTest extends RedisPrioritySortClientTest {
     }
 
     @Test
+    @SuppressWarnings("ConstantConditions")
     void testBadSuffixMatchesAdd() {
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> getClients().getMutation().addOrUpdate("", FIRST).block());
-        Assertions.assertThrows(IllegalArgumentException.class,
+        Assertions.assertThrows(NullPointerException.class,
                 () -> getClients().getMutation().addOrUpdate(null, FIRST).block());
     }
 
