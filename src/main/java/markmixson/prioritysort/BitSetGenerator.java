@@ -47,7 +47,7 @@ public class BitSetGenerator {
     public @NotNull BitSet generate(final int @NotNull [] values, final int length) {
         Preconditions.checkArgument(values.length <= length);
         Preconditions.checkArgument(Arrays.stream(values).noneMatch(value -> value < 0
-                || value > length - 1));
+                || value >= length));
         return length == 0
                 ? new BitSet(0)
                 : generateFromTrueBits(values, length);
