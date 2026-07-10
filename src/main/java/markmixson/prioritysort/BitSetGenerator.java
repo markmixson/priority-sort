@@ -6,7 +6,6 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
 import java.util.BitSet;
 
 /**
@@ -46,19 +45,20 @@ public class BitSetGenerator {
      */
     public @NotNull BitSet generate(final int @NotNull [] values, final int length) {
         Preconditions.checkArgument(values.length <= length);
-        Preconditions.checkArgument(Arrays.stream(values).noneMatch(value -> value < 0
-                || value >= length));
         return length == 0
                 ? new BitSet(0)
-                : generateFromTrueBits(values, length);
+                : getBitSet(values, length);
     }
 
-    private @NotNull BitSet generateFromTrueBits(final int @NotNull [] values, final int length) {
-        final int trueBits = length % Byte.SIZE == 0
+    private @NotNull BitSet getBitSet(final int @NotNull [] values, final int length) {
+        final var bitSet = (BitSet) getBitSetCache().getUnchecked(length % Byte.SIZE == 0
                 ? length
-                : length + Byte.SIZE - length % Byte.SIZE;
-        final var bitSet = (BitSet) getBitSetCache().getUnchecked(trueBits).clone();
-        Arrays.stream(values).forEach(bitSet::flip);
+                : length + Byte.SIZE - length % Byte.SIZE).clone();
+        for (final int value : values) {
+            Preconditions.checkArgument(value >= 0
+                    && value < length);
+            bitSet.flip(value);
+        }
         return bitSet;
     }
 
